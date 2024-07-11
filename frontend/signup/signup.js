@@ -4,7 +4,8 @@ function signup(e){
         const signupDetails={
             name:e.target.username.value,
             email:e.target.email.value,
-            password:e.target.password.value
+            phone:e.target.phone.value,
+            password:e.target.password.value,
         }
         console.log(signupDetails);
         axios.post('http://localhost/user/signup',signupDetails)
