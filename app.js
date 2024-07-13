@@ -6,7 +6,10 @@ const app = express();
 
 const userRoutes= require('./backend/routes/user')
 
-app.use(cors());
+app.use(cors({
+  origin:'*',
+  methods:['GET','POST']
+}));
 app.use(express.json())
 app.use('/user',userRoutes);
 

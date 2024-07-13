@@ -15,7 +15,8 @@ function signup(e){
             }
 
             else if(response.status===200){
-                document.body.innerHTML='<div style="color:red">Email already exist. try with diffrent email.'
+                alert('Email already exists. Please Login.'); 
+                window.location.href='../login/login.html'           
             }
         
         }).catch((error)=>{
