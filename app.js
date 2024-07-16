@@ -25,7 +25,7 @@ Message.belongsTo(User);
 
 
 const port=process.env.PORT||3000;
-sequelize.sync({force:true})
+sequelize.sync()
   .then(() => {
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
