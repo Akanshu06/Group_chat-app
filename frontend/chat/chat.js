@@ -9,7 +9,6 @@ async function takingMessage(event){
         if(response.status===201){
            // console.log(response.data);
             input.value='';
-            window.location.reload();
         }
     } catch (error) {
         const errorMessage = error.response ? error.response.data.message : 'Network Error';
@@ -17,28 +16,38 @@ async function takingMessage(event){
     } 
 }
 
-window.addEventListener('DOMContentLoaded',async ()=>{
+window.addEventListener('DOMContentLoaded', ()=>{
     const token=localStorage.getItem('token');
-    const response=await axios.get('http://localhost:4000/message/getmessage',{headers:{Authorization:token}});
-    try {
-       if(response.status === 200){
-        //console.log(response.data.messages);
-        showingMessage(response.data.messages);
-       } 
-    } catch (error) {
-        console.error(`Error fatching message ${error}`);
-    }
-});
-
-
-
-function showingMessage(messages) {
     const container = document.querySelector('.message-container');
-    container.innerHTML = ''; // Clear previous content
+    const fetchMessages = async () => {
+        try {
+            const response = await axios.get('http://localhost:4000/message/getmessage', {
+                headers: { Authorization: token }
+            });
 
-    messages.forEach(message => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${message.message}`;
-        container.appendChild(listItem);
-    });
-}
+            if (response.status === 200) {
+                showingMessage(response.data.messages);
+            } else {
+                console.error(`Failed to fetch messages. Status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error(`Error fetching messages: ${error}`);
+        }
+    };
+
+    container.innerHTML = ''; // Clear previous messages
+
+    const updateMessages = (messages) => {
+        
+        container.innerHTML = ''; // Clear previous messages
+        
+        messages.forEach(message => {
+            const listItem = document.createElement('li');
+            listItem.textContent = message;
+            container.appendChild(listItem);
+        });
+    };
+
+    fetchMessages();
+    setInterval(fetchMessages,1000)
+});
