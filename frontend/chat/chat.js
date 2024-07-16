@@ -1,9 +1,9 @@
 async function takingMessage(event){
     try {
         event.preventDefault();
-        const message=document.getElementById('message');
-        const response=axios.post('http://localhost/message/usermessage',message)
-        if(response.status===200){
+        const message=event.target.message.value;
+        const response=await axios.post('http://localhost:4000/message/usermessage',{message})
+        if(response.status===201){
             console.log(response.data);
         }
     } catch (error) {

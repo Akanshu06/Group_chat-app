@@ -11,6 +11,7 @@ function signup(e){
         axios.post('http://localhost:4000/user/signup',signupDetails)
         .then((response)=>{
             if(response.status===201){
+                alert('you are signup successfully.Now Login');
                 window.location.href='../login/login.html'
             }
 

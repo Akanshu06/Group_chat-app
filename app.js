@@ -5,8 +5,10 @@ const dotenv=require('dotenv').config();
 const path=require('path');
 const app = express();
 
-
-const userRoutes= require('./backend/routes/user')
+const User=require('./backend/models/user');
+const Message=require('./backend/models/message');
+const userRoutes= require('./backend/routes/user');
+const messageRoutes=require('./backend/routes/message');
 
 app.use(cors({
   origin:'*',
@@ -14,12 +16,16 @@ app.use(cors({
 }));
 app.use(express.json())
 app.use('/user',userRoutes);
+app.use('/message',messageRoutes);
+app.use(express.static(path.join(__dirname, 'frontend')));
 
-app.use((req,res,next)=>{
-  res.sendFile(path.join(__dirname,`frontend/${req.url}`));
-})
+//association
+User.hasMany(Message);
+Message.belongsTo(User);
+
+
 const port=process.env.PORT||3000;
-sequelize.sync()
+sequelize.sync({force:true})
   .then(() => {
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);

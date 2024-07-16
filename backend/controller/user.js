@@ -17,9 +17,10 @@ const signup=async (req,res)=>{
     if(existingUser){
         res.status(200).json({message:'User already exist'})
     }
-    const saltRound=10;
-    bcrypt.hash(password,saltRound,async(err,hash)=>{
+    
+    bcrypt.hash(password,10,async(err,hash)=>{
         await User.create({name,phone,email,password:hash});
+        
         res.status(201).json({message:'new user signup successfully'});
         if(err){
             console.error(err);
@@ -55,7 +56,7 @@ const login=async (req,res)=>{
     }
 }
 const genrateToken=(id,name)=>{
-    return jwt.sign({id:id,name:name},secratekey)
+    return jwt.sign({userId:id,name:name},secratekey)
 }
 
 function isStringvalid(data){
