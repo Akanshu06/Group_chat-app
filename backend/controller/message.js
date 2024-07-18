@@ -1,4 +1,5 @@
 const Massage=require('../models/message');
+const {Op}=require('sequelize');
 const message=async (req,res)=>{
     const {message}= req.body;
    // console.log('============'+req.user.id);
@@ -13,9 +14,17 @@ const message=async (req,res)=>{
 }
 
 const getMessage=async (req,res)=>{
-    const userId=req.user.id;
+    let lastMsgId=req.query.lastMsgId;
+    if(!lastMsgId){
+        lastMsgId =-1;
+    }
+    console.log('lastMsgId:',lastMsgId);
     try {
-        const messages=await Massage.findAll({userId:userId});
+        const messages=await Massage.findAll({where: {
+            id: {
+              [Op.gt]: lastMsgId 
+            }
+          }});
         //console.log(messages);
         res.status(200).json({messages:messages});
         
