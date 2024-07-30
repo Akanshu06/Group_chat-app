@@ -1,7 +1,9 @@
 const { where } = require('sequelize');
 const User=require('../models/user');
+const Group = require('../models/Group');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
+const {Op}=require('sequelize')
 
 const secratekey=process.env.SECRATEKEY;
 
@@ -55,13 +57,70 @@ const login=async (req,res)=>{
        return  res.status(500).json({message:'enternal server error',success:'failed'});
     }
 }
+
+const getUsersNotInGroup = async (req, res) => {
+    const groupId = req.query.groupId; // Use query parameters for GET requests
+
+    if (!groupId) {
+        return res.status(400).json({ message: 'Group ID is required' });
+    }
+
+    try {
+        //const usersNotInGroup = await User.findAll();
+        //Get all users who are not in the specified group
+        const usersInGroup = await User.findAll({
+            attributes: ['id'],
+            include: {
+                model: Group,
+                where: { id: groupId },
+                attributes: []
+            }
+        });
+        console.log('cdnjksncjsnvlsvm',usersInGroup);
+        const usersInGroupIds = usersInGroup.map(user => user.id);
+        const usersNotInGroup = await User.findAll({
+            where: {
+                id: {
+                    [Op.notIn]: usersInGroupIds
+                }
+            }
+        });
+        if (usersNotInGroup.length > 0) {
+            return res.status(200).json({ users: usersNotInGroup });
+        } else {
+            return res.status(404).json({ message: 'No users found who are not in this group' });
+        }
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 const genrateToken=(id,name)=>{
     return jwt.sign({userId:id,name:name},secratekey)
-}
+};
 
 function isStringvalid(data){
     return  !data || data.trim() === '';
-}
+};
+
+const addUserToGroup =  async (req,res)=>{
+    const { userId, groupId } = req.body;
+    try {
+        // Find the user and group
+        const user = await User.findByPk(userId);
+        const group = await Group.findByPk(groupId);
+        if (!user || !group) {
+            return res.status(404).send('User or Group not found');
+        }
+        // Add the user to the group
+        await user.addGroup(group); 
+        res.status(200).send('User added to group');
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
+};
+
 module.exports={
-    signup,login
-}
+    signup,login,getUsersNotInGroup,addUserToGroup
+};

@@ -8,64 +8,120 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         html, body {
-          height: 100%;
+            height: 100%;
+            margin: 0;
         }
         .container {
+            height: 100%;
+            display: flex;
+            flex-direction: row;
             padding: 1rem;
-          height: 80%;
-          display: flex;
-          flex-direction: column;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            width: 300px;
+            padding: 1rem;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-right: 1rem; /* Space between sidebar and chat */
+        }
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         .message-container {
-            background-color: antiquewhite;
-          flex: 1;
-          overflow-y: auto; 
-          padding: 20px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 1rem; /* Space between chat box and form */
+            background-color: #ffffff;
         }
         .form-container {
-          padding: 10px;
-          border-top: 1px solid #ccc;
-          margin-top: auto; /* Push to the bottom */
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            margin-top: auto;
         }
-        .users-container {
-          padding: 10px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          margin-top: 10px;
+        .users-container, .group-container {
+            margin-bottom: 1rem;
         }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="message-container">
-          <!-- Chat messages will be displayed here -->
-          <div>
-            <!-- chat page everyones message will show here -->
-          </div>
-        </div>
-        <div class="form-container">
-          <form onsubmit="takingMessage(event)">
-            <div class="input-group">
-              <input type="text" class="form-control" name="message" id="message" placeholder="Type your message...">
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">Send</button>
-              </div>
+        .users-container h5, .group-container h1 {
+            margin-bottom: 1rem;
+        }
+        .error-container {
+            margin-top: 1rem;
+        }
+        .form-group {
+            margin-top: 1rem;
+        }
+        .btn-success, .btn-primary {
+            margin-top: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 0.5rem;
+            }
+            .sidebar {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="users-container">
+                <h5>Online Users</h5>
+                <ul class="list-group online-users">
+                    <!-- Online users will be dynamically added here -->
+                </ul>
             </div>
-          </form>
+            <div class="form-group">
+                <label for="groupName">Group Name:</label>
+                <input type="text" class="form-control" id="groupName" placeholder="Enter group name...">
+                <button type="button" class="btn btn-success mt-2" onclick="createGroup()">Create Group</button>
+            </div>
+            <div class="group-container">
+                <h1>All Groups</h1>
+                <ul class="list-group groupList">
+                    <!-- Group list items will be dynamically added here -->
+                </ul>
+            </div>
+            <div class="error-container"></div>
+            <div>
+                <button type="button" class="btn btn-primary" id="logout">Logout</button>
+            </div>
         </div>
-        <div class="users-container">
-          <h5>Online Users</h5>
-          <ul class="list-group online-users">
-            <!-- Online users will be dynamically added here -->
-          </ul>
+        <div class="main-content">
+            <div class="message-container">
+                <!-- Chat messages will be displayed here -->
+                <div>
+                    <!-- Chat messages placeholder -->
+                </div>
+            </div>
+            <div class="form-container">
+                <form onsubmit="sendMessage(event)">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="message" id="message" placeholder="Type your message...">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Send</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
+    </div>
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-
     <script src="chat.js"></script>
 </body>
 </html>

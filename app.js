@@ -7,9 +7,11 @@ const app = express();
 
 const User=require('./backend/models/user');
 const Message=require('./backend/models/message');
+const Group = require('./backend/models/Group');
+
 const userRoutes= require('./backend/routes/user');
 const messageRoutes=require('./backend/routes/message');
-
+const groupRoutes = require('./backend/routes/group');
 app.use(cors({
   origin:'*',
   methods:['GET','POST']
@@ -17,11 +19,24 @@ app.use(cors({
 app.use(express.json())
 app.use('/user',userRoutes);
 app.use('/message',messageRoutes);
+app.use('/group',groupRoutes);
+
+
 app.use(express.static(path.join(__dirname, 'frontend')));
 
 //association
 User.hasMany(Message);
 Message.belongsTo(User);
+User.belongsToMany(Group,{through:'usergroup'});
+Group.belongsToMany(User,{through:'usergroup'});
+Group.hasMany(Message, {
+  foreignKey: 'GroupId',
+  onDelete: 'CASCADE',
+});
+Message.belongsTo(Group, {
+  foreignKey: 'GroupId',
+})
+
 
 
 const port=process.env.PORT||3000;
